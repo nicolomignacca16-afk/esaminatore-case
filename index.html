@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proiezione Rendita Affitti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ──────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --border: #e2e5ea;
+  --border-light: #f0f1f3;
+  --text: #1a1a2e;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --accent: #3B82F6;
+  --accent-light: #eff6ff;
+  --accent-dark: #2563eb;
+  --green: #10b981;
+  --green-light: #ecfdf5;
+  --red: #ef4444;
+  --red-light: #fef2f2;
+  --orange: #f59e0b;
+  --orange-light: #fffbeb;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.06);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ───────────────────────────────────── */
+.app {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+header p {
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+/* ── Card ─────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+}
+.card-head h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.card-head .badge {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+.card-body {
+  padding: 20px;
+}
+
+/* ── Form Controls ────────────────────────────── */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.field input, .field select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  width: 100%;
+}
+.field input:focus, .field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+.field input[type="number"] {
+  -moz-appearance: textfield;
+}
+.field input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.field .suffix {
+  position: relative;
+}
+.field .suffix::after {
+  content: attr(data-suffix);
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 13px;
+  pointer-events: none;
+}
+.field .suffix input {
+  padding-right: 36px;
+}
+
+/* ── Buttons ──────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text);
+  transition: all 0.15s;
+}
+.btn:hover { background: var(--bg); }
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-sm { height: 30px; padding: 0 10px; font-size: 12px; }
+.btn-danger { color: var(--red); }
+.btn-danger:hover { background: var(--red-light); border-color: var(--red); }
+.btn-ghost {
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+}
+.btn-ghost:hover { color: var(--text); background: var(--bg); }
+
+/* ── Inline Add Row ───────────────────────────── */
+.add-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.add-row .field { flex: 1; }
+.add-row .btn { flex-shrink: 0; height: 40px; }
+
+/* ── Tables ───────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+tr:last-child td { border-bottom: none; }
+.table-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px;
+  font-size: 13px;
+}
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+td .btn-danger { border: none; padding: 0; height: auto; font-size: 18px; line-height: 1; }
+
+/* ── Forecast Grid ────────────────────────────── */
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+.forecast-item {
+  display: grid;
+  grid-template-columns: 40px 1fr 50px 58px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  transition: background 0.15s;
+}
+.forecast-item:hover { background: var(--accent-light); }
+.forecast-month {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+}
+.forecast-bar-wrap {
+  height: 6px;
+  background: var(--border-light);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.forecast-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.forecast-days, .forecast-price {
+  font-size: 12px;
+  font-weight: 500;
+  text-align: right;
+  color: var(--text-secondary);
+}
+.forecast-price.positive { color: var(--green); }
+.forecast-price.negative { color: var(--red); }
+.forecast-edit {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+.forecast-edit-inner {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  width: 320px;
+  max-width: 90vw;
+}
+.forecast-edit-inner h3 {
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+.forecast-edit-inner .field { margin-bottom: 12px; }
+.forecast-edit-inner .actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.range-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.range-row input[type="range"] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border-light);
+  border-radius: 3px;
+  outline: none;
+}
+.range-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.range-val {
+  min-width: 42px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Costs Two-Column ─────────────────────────── */
+.costs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 640px) { .costs-grid { grid-template-columns: 1fr; } }
+
+/* ── KPI Cards ────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+.kpi {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: center;
+}
+.kpi .value {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 2px;
+}
+.kpi .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.kpi.green .value { color: var(--green); }
+.kpi.red .value { color: var(--red); }
+.kpi.blue .value { color: var(--accent); }
+.kpi.orange .value { color: var(--orange); }
+
+/* ── Charts ───────────────────────────────────── */
+.chart-container {
+  position: relative;
+  width: 100%;
+  margin-top: 16px;
+}
+.chart-container canvas {
+  width: 100% !important;
+  height: 200px !important;
+}
+.chart-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* ── Toolbar ──────────────────────────────────── */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 640px) {
+  .app { padding: 16px 12px 40px; }
+  .form-grid { grid-template-columns: 1fr 1fr; }
+  .forecast-grid { grid-template-columns: 1fr; }
+  .forecast-item { grid-template-columns: 40px 1fr 46px 52px; }
+}
+
+/* ── Utility ──────────────────────────────────── */
+.hidden { display: none !important; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- ═══ Header ═══ -->
+  <header>
+    <h1>Proiezione Rendita Affitti</h1>
+    <p>Calcolatore di redditivit&agrave; per affitti brevi</p>
+  </header>
+
+  <!-- ═══ Settings ═══ -->
+  <div class="card">
+    <div class="card-head"><h2>Impostazioni</h2></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Tasse Piattaforma</label>
+          <div class="suffix" data-suffix="%">
+            <input type="number" id="platformTax" value="15" min="0" max="100">
+          </div>
+        </div>
+        <div class="field">
+          <label>Tasse Personali</label>
+          <div class="suffix" data-suffix="%">
+            <input type="number" id="personalTax" value="21" min="0" max="100">
+          </div>
+        </div>
+        <div class="field">
+          <label>Mese di Inizio</label>
+          <select id="startMonth"></select>
+        </div>
+        <div class="field">
+          <label>Preset Previsione</label>
+          <select id="forecastPreset">
+            <option value="seaside">Citt&agrave; di Mare</option>
+            <option value="mountain">Localit&agrave; Montana</option>
+            <option value="city">Citt&agrave; Urbana</option>
+            <option value="countryside">Campagna</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Affitto Mensile</label>
+          <div class="suffix" data-suffix="€">
+            <input type="number" id="monthlyRent" value="800" min="0">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Market Analysis ═══ -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Analisi di Mercato</h2>
+      <span class="badge" id="avgBadge">Media: 0€/notte</span>
+    </div>
+    <div class="card-body">
+      <div class="add-row">
+        <div class="field">
+          <label>Prezzo / notte</label>
+          <div class="suffix" data-suffix="€">
+            <input type="number" id="marketPrice" placeholder="85" min="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Stanze</label>
+          <input type="number" id="marketRooms" placeholder="2" min="1">
+        </div>
+        <button class="btn btn-primary" onclick="addMarketItem()">Aggiungi</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>€/notte</th><th>Stanze</th><th></th></tr></thead>
+          <tbody id="marketTable"></tbody>
+        </table>
+        <div class="table-empty" id="marketEmpty">Nessun comparabile aggiunto</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Monthly Forecast ═══ -->
+  <div class="card">
+    <div class="card-head"><h2>Previsione Mensile</h2></div>
+    <div class="card-body">
+      <div class="forecast-grid" id="forecastGrid"></div>
+      <p style="margin-top:12px;font-size:12px;color:var(--text-muted);">Clicca su un mese per modificarlo</p>
+    </div>
+  </div>
+
+  <!-- ═══ Costs ═══ -->
+  <div class="card">
+    <div class="card-head"><h2>Costi</h2></div>
+    <div class="card-body">
+      <div class="costs-grid">
+        <!-- Monthly Costs -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <strong style="font-size:13px;">Costi Mensili</strong>
+            <span class="badge" id="monthlyCostBadge">0€/mo</span>
+          </div>
+          <div class="add-row">
+            <div class="field"><input type="text" id="monthlyCostName" placeholder="Nome"></div>
+            <div class="field">
+              <div class="suffix" data-suffix="€">
+                <input type="number" id="monthlyCostPrice" placeholder="Prezzo" min="0">
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="addCost('monthly')">+</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nome</th><th style="text-align:right">Prezzo</th><th></th></tr></thead>
+              <tbody id="monthlyCostTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Setup Costs -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <strong style="font-size:13px;">Costi di Avviamento (una tantum)</strong>
+            <span class="badge" id="setupCostBadge">0€</span>
+          </div>
+          <div class="add-row">
+            <div class="field"><input type="text" id="setupCostName" placeholder="Nome"></div>
+            <div class="field">
+              <div class="suffix" data-suffix="€">
+                <input type="number" id="setupCostPrice" placeholder="Prezzo" min="0">
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="addCost('setup')">+</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nome</th><th style="text-align:right">Prezzo</th><th></th></tr></thead>
+              <tbody id="setupCostTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Results ═══ -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Risultati</h2>
+      <div class="toolbar" style="margin:0;">
+        <button class="btn btn-sm" onclick="exportCSV()">Esporta CSV</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="kpi-grid">
+        <div class="kpi blue"><div class="value" id="kpiGross">0€</div><div class="label">Ricavo Lordo</div></div>
+        <div class="kpi green"><div class="value" id="kpiNet">0€</div><div class="label">Profitto Netto</div></div>
+        <div class="kpi orange"><div class="value" id="kpiROI">0%</div><div class="label">ROI Annuale</div></div>
+        <div class="kpi"><div class="value" id="kpiBreakeven">—</div><div class="label">Pareggio</div></div>
+      </div>
+      <div class="chart-container">
+        <div class="chart-label">Ricavi vs Costi Mensili</div>
+        <canvas id="revenueChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chart-label">Saldo Cumulativo</div>
+        <canvas id="balanceChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Forecast Edit Modal ═══ -->
+<div class="forecast-edit hidden" id="forecastModal" onclick="if(event.target===this)closeForecastModal()">
+  <div class="forecast-edit-inner">
+    <h3 id="forecastModalTitle">Gennaio</h3>
+    <div class="field">
+      <label>Giorni di Occupazione</label>
+      <div class="range-row">
+        <input type="range" id="editDays" min="0" max="31" oninput="document.getElementById('editDaysVal').textContent=this.value+'d'">
+        <span class="range-val" id="editDaysVal">0d</span>
+      </div>
+    </div>
+    <div class="field mt-12">
+      <label>Ottimizzazione Prezzo %</label>
+      <div class="range-row">
+        <input type="range" id="editPrice" min="-50" max="200" oninput="document.getElementById('editPriceVal').textContent=(this.value>0?'+':'')+this.value+'%'">
+        <span class="range-val" id="editPriceVal">0%</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="closeForecastModal()">Annulla</button>
+      <button class="btn btn-primary" onclick="saveForecast()">Salva</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════ */
+const MONTHS = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+const MONTH_FULL = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const DAYS_IN_MONTH = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+const PRESETS = {
+  seaside:     { label: 'Citt\u00e0 di Mare',     days: [10,10,12,15,20,25,28,30,22,20,10,10], price: [-20,-30,-20,0,10,40,50,60,40,0,-30,-20] },
+  mountain:    { label: 'Localit\u00e0 Montana', days: [15,15,10,8,6,10,18,20,10,8,12,18],    price: [20,20,-10,-20,-30,0,30,40,0,-20,10,30] },
+  city:        { label: 'Citt\u00e0 Urbana',     days: [18,18,20,20,22,20,15,12,22,22,18,15], price: [0,0,5,10,10,5,-10,-20,10,10,0,-5] },
+  countryside: { label: 'Campagna',               days: [5,5,8,12,18,22,25,28,18,12,6,5],      price: [-30,-30,-20,0,10,30,40,50,20,0,-30,-30] },
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('rent-projector-state');
+    if (saved) return JSON.parse(saved);
+  } catch(e) { /* ignore */ }
+  return null;
+}
+
+function defaultState() {
+  const p = PRESETS.seaside;
+  return {
+    platformTax: 15,
+    personalTax: 21,
+    startMonth: 0,
+    preset: 'seaside',
+    monthlyRent: 800,
+    market: [],
+    forecast: MONTHS.map((m, i) => ({ days: p.days[i], price: p.price[i] })),
+    monthlyCosts: [
+      { name: 'Channel Manager', price: 25 },
+      { name: 'Internet', price: 25 },
+      { name: 'Self check-in', price: 25 },
+      { name: 'Acqua', price: 25 },
+      { name: 'Elettricit\u00e0', price: 100 },
+    ],
+    setupCosts: [
+      { name: 'Kit iniziale', price: 500 },
+      { name: 'Macchina del caff\u00e8', price: 80 },
+      { name: 'Lavatrice', price: 450 },
+      { name: 'Divano letto', price: 680 },
+    ],
+  };
+}
+
+let state = loadState() || defaultState();
+let editingMonth = null;
+
+function saveState() {
+  try { localStorage.setItem('rent-projector-state', JSON.stringify(state)); } catch(e) { /* ignore */ }
+}
+
+/* ═══════════════════════════════════════════════════
+   RENDER
+   ═══════════════════════════════════════════════════ */
+function render() {
+  saveState();
+  renderSettings();
+  renderMarket();
+  renderForecast();
+  renderCosts();
+  renderResults();
+}
+
+function renderSettings() {
+  document.getElementById('platformTax').value = state.platformTax;
+  document.getElementById('personalTax').value = state.personalTax;
+  document.getElementById('monthlyRent').value = state.monthlyRent;
+
+  const startSel = document.getElementById('startMonth');
+  if (startSel.options.length === 0) {
+    MONTH_FULL.forEach((m, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = m;
+      startSel.appendChild(opt);
+    });
+  }
+  startSel.value = state.startMonth;
+  document.getElementById('forecastPreset').value = state.preset;
+}
+
+function renderMarket() {
+  const tbody = document.getElementById('marketTable');
+  const empty = document.getElementById('marketEmpty');
+  if (state.market.length === 0) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+    tbody.innerHTML = state.market.map((item, i) =>
+      `<tr>
+        <td>Comp. #${i + 1}</td>
+        <td>${item.price}\u20AC</td>
+        <td>${item.rooms}</td>
+        <td><button class="btn-danger btn-sm btn-ghost" onclick="removeMarket(${i})">×</button></td>
+      </tr>`
+    ).join('');
+  }
+  const avg = state.market.length > 0
+    ? Math.round(state.market.reduce((s, m) => s + m.price, 0) / state.market.length)
+    : 0;
+  document.getElementById('avgBadge').textContent = `Media: ${avg}\u20AC/notte`;
+}
+
+function renderForecast() {
+  const grid = document.getElementById('forecastGrid');
+  grid.innerHTML = state.forecast.map((f, i) => {
+    const maxDays = DAYS_IN_MONTH[i];
+    const pct = Math.round((f.days / maxDays) * 100);
+    const priceClass = f.price > 0 ? 'positive' : f.price < 0 ? 'negative' : '';
+    const priceStr = (f.price > 0 ? '+' : '') + f.price + '%';
+    return `<div class="forecast-item" onclick="openForecastModal(${i})" style="cursor:pointer" title="Clicca per modificare">
+      <span class="forecast-month">${MONTHS[i]}</span>
+      <div class="forecast-bar-wrap"><div class="forecast-bar" style="width:${pct}%"></div></div>
+      <span class="forecast-days">${f.days}d</span>
+      <span class="forecast-price ${priceClass}">${priceStr}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderCosts() {
+  renderCostTable('monthly');
+  renderCostTable('setup');
+}
+
+function renderCostTable(type) {
+  const list = type === 'monthly' ? state.monthlyCosts : state.setupCosts;
+  const tbody = document.getElementById(type + 'CostTable');
+  const total = list.reduce((s, c) => s + c.price, 0);
+  tbody.innerHTML = list.map((c, i) =>
+    `<tr>
+      <td>${c.name}</td>
+      <td style="text-align:right">${c.price}€</td>
+      <td style="width:32px"><button class="btn-danger btn-sm btn-ghost" onclick="removeCost('${type}',${i})">×</button></td>
+    </tr>`
+  ).join('');
+  const badgeId = type + 'CostBadge';
+  document.getElementById(badgeId).textContent = total + (type === 'monthly' ? '€/mo' : '€');
+}
+
+/* ═══════════════════════════════════════════════════
+   CALCULATIONS & RESULTS
+   ═══════════════════════════════════════════════════ */
+function calcMonthlyData() {
+  const avgPrice = state.market.length > 0
+    ? state.market.reduce((s, m) => s + m.price, 0) / state.market.length
+    : 0;
+  const platformRate = state.platformTax / 100;
+  const personalRate = state.personalTax / 100;
+  const totalMonthlyCost = state.monthlyCosts.reduce((s, c) => s + c.price, 0) + state.monthlyRent;
+  const totalSetup = state.setupCosts.reduce((s, c) => s + c.price, 0);
+
+  const data = [];
+  for (let i = 0; i < 12; i++) {
+    const idx = (state.startMonth + i) % 12;
+    const f = state.forecast[idx];
+    const effectivePrice = avgPrice * (1 + f.price / 100);
+    const gross = effectivePrice * f.days;
+    const afterPlatform = gross * (1 - platformRate);
+    const afterPersonal = afterPlatform * (1 - personalRate);
+    const net = afterPersonal - totalMonthlyCost;
+    data.push({
+      monthIdx: idx,
+      month: MONTHS[idx],
+      days: f.days,
+      priceOpt: f.price,
+      effectivePrice: Math.round(effectivePrice * 100) / 100,
+      gross: Math.round(gross),
+      net: Math.round(net),
+      totalCost: totalMonthlyCost,
+    });
+  }
+
+  let cumulative = -totalSetup;
+  let breakeven = null;
+  const cumulativeData = data.map((d, i) => {
+    cumulative += d.net;
+    if (breakeven === null && cumulative >= 0) breakeven = i + 1;
+    return { ...d, cumulative: Math.round(cumulative) };
+  });
+
+  const grossTotal = data.reduce((s, d) => s + d.gross, 0);
+  const netTotal = data.reduce((s, d) => s + d.net, 0);
+  const investment = totalSetup + (state.monthlyRent * 12);
+  const roi = investment > 0 ? Math.round((netTotal / investment) * 100) : 0;
+
+  return { monthly: cumulativeData, grossTotal, netTotal, roi, breakeven, totalSetup };
+}
+
+function renderResults() {
+  const { monthly, grossTotal, netTotal, roi, breakeven } = calcMonthlyData();
+
+  const fmt = (n) => {
+    if (Math.abs(n) >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K€';
+    return n + '€';
+  };
+
+  document.getElementById('kpiGross').textContent = fmt(grossTotal);
+  document.getElementById('kpiNet').textContent = fmt(netTotal);
+  document.getElementById('kpiROI').textContent = roi + '%';
+  document.getElementById('kpiBreakeven').textContent = breakeven ? `Mese ${breakeven}` : '—';
+
+  const kpiNetEl = document.getElementById('kpiNet').parentElement;
+  kpiNetEl.className = 'kpi ' + (netTotal >= 0 ? 'green' : 'red');
+
+  const kpiROIEl = document.getElementById('kpiROI').parentElement;
+  kpiROIEl.className = 'kpi ' + (roi >= 0 ? 'green' : 'red');
+
+  drawRevenueChart(monthly);
+  drawBalanceChart(monthly);
+}
+
+/* ═══════════════════════════════════════════════════
+   CHARTS (Canvas)
+   ═══════════════════════════════════════════════════ */
+function drawRevenueChart(data) {
+  const canvas = document.getElementById('revenueChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.parentElement.clientWidth;
+  const h = 200;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = { top: 20, right: 16, bottom: 32, left: 50 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+  const barW = cw / data.length;
+
+  const allVals = data.flatMap(d => [d.gross, d.net, d.totalCost]);
+  const maxVal = Math.max(...allVals, 1);
+  const minVal = Math.min(...allVals, 0);
+  const range = maxVal - minVal || 1;
+
+  const yScale = (v) => pad.top + ch - ((v - minVal) / range) * ch;
+  const zeroY = yScale(0);
+
+  // grid lines
+  ctx.strokeStyle = '#e2e5ea';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (ch / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(w - pad.right, y);
+    ctx.stroke();
+    const val = Math.round(maxVal - (range / 4) * i);
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(val + '€', pad.left - 6, y + 3);
+  }
+
+  // bars
+  data.forEach((d, i) => {
+    const x = pad.left + i * barW + barW * 0.15;
+    const bw = barW * 0.35;
+
+    // gross bar
+    const gy = yScale(d.gross);
+    ctx.fillStyle = '#dbeafe';
+    ctx.beginPath();
+    ctx.roundRect(x, Math.min(gy, zeroY), bw, Math.abs(zeroY - gy) || 1, 3);
+    ctx.fill();
+
+    // net bar
+    const ny = yScale(d.net);
+    ctx.fillStyle = d.net >= 0 ? '#86efac' : '#fca5a5';
+    ctx.beginPath();
+    ctx.roundRect(x + bw + 2, Math.min(ny, zeroY), bw, Math.abs(zeroY - ny) || 1, 3);
+    ctx.fill();
+
+    // month label
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.month, pad.left + i * barW + barW / 2, h - pad.bottom + 16);
+  });
+
+  // zero line
+  ctx.strokeStyle = '#9ca3af';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, zeroY);
+  ctx.lineTo(w - pad.right, zeroY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // legend
+  ctx.font = '10px Inter, sans-serif';
+  ctx.fillStyle = '#dbeafe';
+  ctx.fillRect(pad.left, h - 10, 10, 8);
+  ctx.fillStyle = '#6b7280';
+  ctx.textAlign = 'left';
+  ctx.fillText('Lordo', pad.left + 14, h - 3);
+  ctx.fillStyle = '#86efac';
+  ctx.fillRect(pad.left + 58, h - 10, 10, 8);
+  ctx.fillStyle = '#6b7280';
+  ctx.fillText('Netto', pad.left + 72, h - 3);
+}
+
+function drawBalanceChart(data) {
+  const canvas = document.getElementById('balanceChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.parentElement.clientWidth;
+  const h = 200;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = { top: 20, right: 16, bottom: 32, left: 50 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  const vals = data.map(d => d.cumulative);
+  const maxVal = Math.max(...vals, 0);
+  const minVal = Math.min(...vals, 0);
+  const range = maxVal - minVal || 1;
+  const yScale = (v) => pad.top + ch - ((v - minVal) / range) * ch;
+  const zeroY = yScale(0);
+
+  // grid
+  ctx.strokeStyle = '#e2e5ea';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (ch / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(w - pad.right, y);
+    ctx.stroke();
+    const val = Math.round(maxVal - (range / 4) * i);
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(val + '€', pad.left - 6, y + 3);
+  }
+
+  // zero line
+  ctx.strokeStyle = '#9ca3af';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, zeroY);
+  ctx.lineTo(w - pad.right, zeroY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // area fill
+  const stepX = cw / (data.length - 1 || 1);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, zeroY);
+  data.forEach((d, i) => {
+    const x = pad.left + i * stepX;
+    const y = yScale(d.cumulative);
+    if (i === 0) ctx.lineTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.lineTo(pad.left + (data.length - 1) * stepX, zeroY);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.top, 0, h - pad.bottom);
+  grad.addColorStop(0, 'rgba(16,185,129,0.15)');
+  grad.addColorStop(1, 'rgba(239,68,68,0.1)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // line
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = pad.left + i * stepX;
+    const y = yScale(d.cumulative);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = data[data.length - 1]?.cumulative >= 0 ? '#10b981' : '#ef4444';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // dots
+  data.forEach((d, i) => {
+    const x = pad.left + i * stepX;
+    const y = yScale(d.cumulative);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = d.cumulative >= 0 ? '#10b981' : '#ef4444';
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+
+  // month labels
+  data.forEach((d, i) => {
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.month, pad.left + i * stepX, h - pad.bottom + 16);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   ACTIONS
+   ═══════════════════════════════════════════════════ */
+function addMarketItem() {
+  const priceEl = document.getElementById('marketPrice');
+  const roomsEl = document.getElementById('marketRooms');
+  const price = parseFloat(priceEl.value);
+  const rooms = parseInt(roomsEl.value);
+  if (!price || price <= 0) return;
+  state.market = [...state.market, { price, rooms: rooms || 1 }];
+  priceEl.value = '';
+  roomsEl.value = '';
+  render();
+}
+
+function removeMarket(idx) {
+  state.market = state.market.filter((_, i) => i !== idx);
+  render();
+}
+
+function addCost(type) {
+  const nameEl = document.getElementById(type + 'CostName');
+  const priceEl = document.getElementById(type + 'CostPrice');
+  const name = nameEl.value.trim();
+  const price = parseFloat(priceEl.value);
+  if (!name || !price || price <= 0) return;
+  const item = { name, price };
+  if (type === 'monthly') {
+    state.monthlyCosts = [...state.monthlyCosts, item];
+  } else {
+    state.setupCosts = [...state.setupCosts, item];
+  }
+  nameEl.value = '';
+  priceEl.value = '';
+  render();
+}
+
+function removeCost(type, idx) {
+  if (type === 'monthly') {
+    state.monthlyCosts = state.monthlyCosts.filter((_, i) => i !== idx);
+  } else {
+    state.setupCosts = state.setupCosts.filter((_, i) => i !== idx);
+  }
+  render();
+}
+
+function openForecastModal(idx) {
+  editingMonth = idx;
+  const f = state.forecast[idx];
+  document.getElementById('forecastModalTitle').textContent = MONTH_FULL[idx];
+  const daysEl = document.getElementById('editDays');
+  daysEl.max = DAYS_IN_MONTH[idx];
+  daysEl.value = f.days;
+  document.getElementById('editDaysVal').textContent = f.days + 'd';
+  const priceEl = document.getElementById('editPrice');
+  priceEl.value = f.price;
+  document.getElementById('editPriceVal').textContent = (f.price > 0 ? '+' : '') + f.price + '%';
+  document.getElementById('forecastModal').classList.remove('hidden');
+}
+
+function closeForecastModal() {
+  document.getElementById('forecastModal').classList.add('hidden');
+  editingMonth = null;
+}
+
+function saveForecast() {
+  if (editingMonth === null) return;
+  const days = parseInt(document.getElementById('editDays').value);
+  const price = parseInt(document.getElementById('editPrice').value);
+  state.forecast = state.forecast.map((f, i) =>
+    i === editingMonth ? { days, price } : f
+  );
+  closeForecastModal();
+  render();
+}
+
+function applyPreset(key) {
+  const p = PRESETS[key];
+  if (!p) return;
+  state.preset = key;
+  state.forecast = MONTHS.map((_, i) => ({ days: p.days[i], price: p.price[i] }));
+  render();
+}
+
+function exportCSV() {
+  const { monthly } = calcMonthlyData();
+  const headers = ['Mese', 'Giorni', 'Ott. Prezzo %', 'Prezzo Eff./notte', 'Lordo', 'Netto', 'Cumulativo'];
+  const rows = monthly.map(d => [
+    MONTH_FULL[d.monthIdx], d.days, d.priceOpt + '%',
+    d.effectivePrice + '€', d.gross + '€', d.net + '€', d.cumulative + '€'
+  ]);
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'proiezione-rendita.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ═══════════════════════════════════════════════════
+   EVENT LISTENERS
+   ═══════════════════════════════════════════════════ */
+function bindInputs() {
+  const on = (id, fn) => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', fn);
+    el.addEventListener('change', fn);
+  };
+  on('platformTax', (e) => { state.platformTax = Math.max(0, Math.min(100, parseInt(e.target.value) || 0)); render(); });
+  on('personalTax', (e) => { state.personalTax = Math.max(0, Math.min(100, parseInt(e.target.value) || 0)); render(); });
+  on('monthlyRent', (e) => { state.monthlyRent = Math.max(0, parseInt(e.target.value) || 0); render(); });
+  on('startMonth', (e) => { state.startMonth = parseInt(e.target.value); render(); });
+  on('forecastPreset', (e) => { applyPreset(e.target.value); });
+
+  // enter key on add rows
+  ['marketPrice', 'marketRooms'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); addMarketItem(); }
+    });
+  });
+  ['monthlyCostName', 'monthlyCostPrice'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); addCost('monthly'); }
+    });
+  });
+  ['setupCostName', 'setupCostPrice'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); addCost('setup'); }
+    });
+  });
+
+  // escape to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeForecastModal();
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  bindInputs();
+  render();
+});
+
+window.addEventListener('resize', () => {
+  const { monthly } = calcMonthlyData();
+  drawRevenueChart(monthly);
+  drawBalanceChart(monthly);
+});
+</script>
+</body>
+</html>
